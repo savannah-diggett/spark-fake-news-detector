@@ -1,10 +1,10 @@
 # Spark MLlib Fake News Detection Pipeline
 
-A scalable fake news detection pipeline built with **Spark MLlib**, comparing Logistic Regression, Random Forest, Gradient Boosted Trees, and a stacked ensemble on the LIAR dataset — benchmarked across a single-node Colab environment and a distributed **GCP Dataproc** cluster.
+A scalable fake news detection pipeline built with **Spark MLlib**, comparing Logistic Regression, Random Forest, Gradient Boosted Trees, and a stacked ensemble on the LIAR dataset,  benchmarked across a single-node Colab environment and a distributed **GCP Dataproc** cluster.
 
 ## Problem & Motivation
 
-Fake news detection is a classification problem: given a statement, predict whether it's real or fake. Manual fact-checking doesn't scale — social media platforms generate millions of statements daily, and misinformation poses a direct threat to democratic integrity and public health.
+Fake news detection is a classification problem: given a statement, predict whether it's real or fake. Manual fact-checking doesn't scale: social media platforms generate millions of statements daily, and misinformation poses a direct threat to democratic integrity and public health.
 
 This is a strong candidate for a distributed ML approach because:
 - The classification signal is subtle — fake news often mimics the language patterns of real news, so simple rule-based approaches fail.
@@ -13,7 +13,7 @@ This is a strong candidate for a distributed ML approach because:
 
 ## Dataset
 
-**[LIAR dataset](https://doi.org/10.18653/v1/P17-2067)** (Wang, 2017) — 12,836 short political statements labelled across 6 veracity classes: `true`, `mostly-true`, `half-true`, `barely-true`, `false`, `pants-fire`.
+**[LIAR dataset](https://doi.org/10.18653/v1/P17-2067)** (Wang, 2017): 12,836 short political statements labelled across 6 veracity classes: `true`, `mostly-true`, `half-true`, `barely-true`, `false`, `pants-fire`.
 
 The 6 classes were collapsed into a **binary label**:
 - **Real (0):** true, mostly-true, half-true
@@ -39,7 +39,7 @@ All models share the same feature engineering pipeline, ensuring the classifier 
 
 ## Exploratory Analysis
 
-Speaker credibility count features (historical true/false counts) were checked for correlation with the binary label before modelling. All five showed very weak correlation (strongest: `pants_fire` at 0.16), suggesting a speaker's historical credibility alone is a poor predictor of any single statement's veracity — reinforcing that the **text content itself** carries most of the predictive signal.
+Speaker credibility count features (historical true/false counts) were checked for correlation with the binary label before modelling. All five showed very weak correlation (strongest: `pants_fire` at 0.16), suggesting a speaker's historical credibility alone is a poor predictor of any single statement's veracity, reinforcing that the **text content itself** carries most of the predictive signal.
 
 ## Models & Results
 
@@ -50,7 +50,7 @@ Speaker credibility count features (historical true/false counts) were checked f
 | **GBT** | **0.81** | **0.73** | **0.73** | 53.79 s |
 | Stacking (LR + RF) | 0.74 | 0.68 | 0.68 | — |
 
-**Metrics used:** AUC (primary — threshold-independent, handles class imbalance), Accuracy (interpretable, appropriate given the roughly balanced 56/44 split), and F1 (balances false positives and false negatives, both of which carry real-world cost in a content moderation setting).
+**Metrics used:** AUC (primary, threshold-independent, handles class imbalance), Accuracy (interpretable, appropriate given the roughly balanced 56/44 split), and F1 (balances false positives and false negatives, both of which carry real-world cost in a content moderation setting).
 
 **Key findings:**
 - Logistic Regression performed barely better than random guessing (AUC 0.56), consistent with the expectation that a linear decision boundary can't capture the non-linear, interaction-heavy relationship between text patterns and speaker context (e.g. the same phrase can be truthful from one speaker and misleading from another).
